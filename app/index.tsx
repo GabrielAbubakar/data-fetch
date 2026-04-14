@@ -1,5 +1,6 @@
+import { useFetch } from "@/api";
 import { router } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -13,29 +14,24 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { User } from "../types";
 
 export default function Index() {
-  const [loading, setLoading] = useState(true);
-  const [users, setUsers] = useState<User[]>([]);
   const [query, setQuery] = useState("");
-
-  const fetchUsers = useCallback(async () => {
-    setLoading(true);
-
-    try {
-      const response = await fetch(
-        `https://jsonplaceholder.typicode.com/users?q=${query}`,
-      );
-      const data = await response.json();
-      setUsers(data);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  }, [query]);
+  const [debouncedQuery, setDebouncedQuery] = useState(query);
 
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+    const handler = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [query]);
+
+  const {
+    data: users,
+    loading,
+    refetch,
+  } = useFetch<User[]>("users?q=" + debouncedQuery);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -78,8 +74,9 @@ export default function Index() {
             </TouchableOpacity>
           )}
           refreshControl={
-            <RefreshControl refreshing={loading} onRefresh={fetchUsers} />
+            <RefreshControl refreshing={loading} onRefresh={refetch} />
           }
+          onRefresh={refetch}
           ListEmptyComponent={() => {
             if (loading) {
               return <ActivityIndicator size="large" />;
