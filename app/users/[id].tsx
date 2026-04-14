@@ -1,9 +1,9 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useLocalSearchParams } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { User } from "../types";
+import { User } from "../../types";
 
 const DetailRow = ({ label, value }: { label: string; value: string }) => {
   return (
@@ -19,25 +19,25 @@ export default function UserDetails() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      setLoading(true);
+  const fetchUser = useCallback(async () => {
+    setLoading(true);
 
-      try {
-        const response = await fetch(
-          `https://jsonplaceholder.typicode.com/users/${id}`,
-        );
-        const data = await response.json();
-        setUser(data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
+    try {
+      const response = await fetch(
+        `https://jsonplaceholder.typicode.com/users/${id}`,
+      );
+      const data = await response.json();
+      setUser(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

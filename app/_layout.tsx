@@ -6,7 +6,7 @@ export default function RootLayout() {
     <>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
-        <Stack.Screen name="user-details" />
+        <Stack.Screen name="users/[id]" />
       </Stack>
       <StatusBar style="dark" />
     </>
