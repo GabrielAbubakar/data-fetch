@@ -1,6 +1,7 @@
 import { useFetch } from "@/api";
+import { useDebounce } from "@/hooks/useDebounce";
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -15,17 +16,7 @@ import { User } from "../types";
 
 export default function Index() {
   const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState(query);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedQuery(query);
-    }, 500);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [query]);
+  const debouncedQuery = useDebounce(query, 500);
 
   const {
     data: users,
@@ -61,9 +52,9 @@ export default function Index() {
         <FlatList
           contentContainerStyle={{
             gap: 10,
-            flex: 1,
+            flexGrow: 1,
           }}
-          data={users}
+          data={users ?? []}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <TouchableOpacity
@@ -76,7 +67,6 @@ export default function Index() {
           refreshControl={
             <RefreshControl refreshing={loading} onRefresh={refetch} />
           }
-          onRefresh={refetch}
           ListEmptyComponent={() => {
             if (loading) {
               return <ActivityIndicator size="large" />;

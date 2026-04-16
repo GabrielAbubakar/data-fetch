@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 
 export const useFetch = <T = any>(endpoint: string) => {
   const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<any>(null);
 
   const fetchData = useCallback(

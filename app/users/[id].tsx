@@ -24,8 +24,8 @@ export default function UserDetails() {
       <View
         style={{
           flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
+          padding: 16,
+          marginTop: 50,
         }}
       >
         {loading ? (
@@ -36,7 +36,7 @@ export default function UserDetails() {
               name="user-circle"
               size={128}
               color="black"
-              style={{ alignSelf: "center", marginBottom: 20 }}
+              style={{ marginBottom: 20 }}
             />
             <DetailRow label="Name" value={user?.name || ""} />
             <DetailRow label="Email" value={user?.email || ""} />
