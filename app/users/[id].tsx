@@ -1,10 +1,9 @@
+import { useGetUserById } from "@/hooks/useUsers";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useFetch } from "../../api";
-import { User } from "../../types";
 
 const DetailRow = ({ label, value }: { label: string; value: string }) => {
   return (
@@ -17,7 +16,7 @@ const DetailRow = ({ label, value }: { label: string; value: string }) => {
 
 export default function UserDetails() {
   const { id } = useLocalSearchParams();
-  const { data: user, loading } = useFetch<User>(`users/${id}`);
+  const { data: user, isLoading } = useGetUserById(id as string);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -28,7 +27,7 @@ export default function UserDetails() {
           marginTop: 50,
         }}
       >
-        {loading ? (
+        {isLoading ? (
           <ActivityIndicator size="large" />
         ) : (
           <View style={{ gap: 10 }}>

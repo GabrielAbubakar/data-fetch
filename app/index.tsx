@@ -1,5 +1,5 @@
-import { useFetch } from "@/api";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useGetAllUsers } from "@/hooks/useUsers";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
@@ -12,17 +12,15 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { User } from "../types";
 
 export default function Index() {
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query, 500);
-
   const {
     data: users,
-    loading,
+    isLoading,
     refetch,
-  } = useFetch<User[]>("users?q=" + debouncedQuery);
+  } = useGetAllUsers({ q: debouncedQuery });
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -65,10 +63,10 @@ export default function Index() {
             </TouchableOpacity>
           )}
           refreshControl={
-            <RefreshControl refreshing={loading} onRefresh={refetch} />
+            <RefreshControl refreshing={isLoading} onRefresh={refetch} />
           }
           ListEmptyComponent={() => {
-            if (loading) {
+            if (isLoading) {
               return <ActivityIndicator size="large" />;
             }
             return <Text>No users found</Text>;
